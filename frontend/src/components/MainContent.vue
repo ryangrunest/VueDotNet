@@ -6,7 +6,7 @@
           <label class="label">Favorite Food</label>
           <div class="control">
             <input
-              v-model="nameOfFood"
+              v-model="foodName"
               class="input"
               type="text"
               placeholder="Spaghetti"
@@ -22,16 +22,16 @@
         </div>
 
         <button @click="addFood" class="button is-primary">
-          Add Food to Favorites
+          {{ buttonText }}
         </button>
       </form>
     </div>
     <div class="container food-items-container py-5">
       <FoodItem
-        v-bind:key="index"
-        v-for="(food, index) in favoriteFoods"
+        v-bind:key="food.id"
+        v-for="food in favoriteFoods"
         v-bind:isTasty="food.isTasty"
-        v-bind:name="food.nameOfFood"
+        v-bind:name="food.foodName"
         v-bind:deleteFunction="deleteFood"
         :class="
           food.isTasty
@@ -44,7 +44,10 @@
 </template>
 
 <script>
+import axios from "axios";
+
 import FoodItem from "./FoodItem.vue";
+import api from "../api";
 
 export default {
   name: "MainContent",
@@ -54,30 +57,49 @@ export default {
   },
   data() {
     return {
-      isTasty: true,
-      nameOfFood: "beans",
-      favoriteFoods: [{ isTasty: true, nameOfFood: "beans" }],
+      isLoading: false,
+      isTasty: false,
+      foodName: "",
+      favoriteFoods: [],
     };
   },
   methods: {
     addFood(event) {
       event.preventDefault();
-      console.log(event);
-      console.log(`Food: ${this.nameOfFood}, isTasty: ${this.isTasty}`);
+      this.isLoading = true;
+      const config = {
+        method: "POST",
+        url: "https://localhost:5001/api/FoodApi",
+        data: {
+          foodName: this.foodName,
+          isTasty: this.isTasty,
+        },
+      };
 
-      this.favoriteFoods.push({
-        isTasty: this.isTasty,
-        nameOfFood: this.nameOfFood,
+      axios(config).then((response) => {
+        console.log(response);
+        this.isLoading = false;
+        this.updateFavoriteFoods();
       });
     },
-    deleteFood(nameOfFood) {
-      for (const [index, food] of this.favoriteFoods.entries()) {
-        if (food.nameOfFood === nameOfFood) {
-          this.favoriteFoods.splice(index, 1);
-          break;
-        }
-      }
+    async deleteFood(nameOfFood) {
+      const allFoods = this.favoriteFoods;
+      const food = allFoods.find((f) => nameOfFood == f.foodName);
+      let success = await api.deleteFood(food);
+      if (success) await this.updateFavoriteFoods();
+      return true;
     },
+    async updateFavoriteFoods() {
+      this.favoriteFoods = await api.getAllFavoriteFoods();
+    },
+  },
+  computed: {
+    buttonText() {
+      return this.isLoading === true ? "Loading..." : "Add Food to Favorites";
+    },
+  },
+  mounted() {
+    this.updateFavoriteFoods();
   },
 };
 </script>
