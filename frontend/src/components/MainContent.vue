@@ -10,6 +10,7 @@
               class="input"
               type="text"
               placeholder="Spaghetti"
+              required
             />
           </div>
         </div>
@@ -21,7 +22,11 @@
           </label>
         </div>
 
-        <button @click="addFood" class="button is-primary">
+        <button
+          :disabled="isButtonDisabled"
+          @click="addFood"
+          class="button is-primary"
+        >
           {{ buttonText }}
         </button>
       </form>
@@ -44,8 +49,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 import FoodItem from "./FoodItem.vue";
 import api from "../api";
 
@@ -64,23 +67,17 @@ export default {
     };
   },
   methods: {
-    addFood(event) {
+    async addFood(event) {
       event.preventDefault();
       this.isLoading = true;
-      const config = {
-        method: "POST",
-        url: "https://localhost:5001/api/FoodApi",
-        data: {
-          foodName: this.foodName,
-          isTasty: this.isTasty,
-        },
-      };
-
-      axios(config).then((response) => {
-        console.log(response);
-        this.isLoading = false;
-        this.updateFavoriteFoods();
+      let success = await api.addFood({
+        foodName: this.foodName,
+        isTasty: this.isTasty,
       });
+      if (success) await this.updateFavoriteFoods();
+      this.isLoading = false;
+      this.isTasty = false;
+      this.foodName = "";
     },
     async deleteFood(nameOfFood) {
       const allFoods = this.favoriteFoods;
@@ -96,6 +93,9 @@ export default {
   computed: {
     buttonText() {
       return this.isLoading === true ? "Loading..." : "Add Food to Favorites";
+    },
+    isButtonDisabled() {
+      return this.foodName !== "" ? false : true;
     },
   },
   mounted() {

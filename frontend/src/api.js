@@ -38,6 +38,28 @@ const api = {
       }
     });
   },
+  addFood: (food) => {
+    return new Promise((resolve, reject) => {
+      console.log("adding food", food);
+      try {
+        const config = {
+          method: "POST",
+          url: "https://localhost:5001/api/FoodApi",
+          data: food,
+        };
+
+        axios(config).then((response) => {
+          console.log(response);
+          resolve(true);
+          this.isLoading = false;
+          this.updateFavoriteFoods();
+        });
+      } catch (err) {
+        console.warn("error adding food", err);
+        reject(false);
+      }
+    });
+  },
 };
 
 export default api;
