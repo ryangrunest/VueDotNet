@@ -7411,5 +7411,13 @@
         "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.100/RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file /Users/rgrunest/Desktop/dotnet/api/obj/project.nuget.cache : Found invalid data while decoding."
+    }
+  ]
 }

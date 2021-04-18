@@ -5,29 +5,29 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ApiController.Models;
+using FoodApi.Models;
 
 namespace api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ApiController : ControllerBase
+    public class FoodApiController : ControllerBase
     {
         private readonly FavoriteFoodsContext _context;
 
-        public ApiController(FavoriteFoodsContext context)
+        public FoodApiController(FavoriteFoodsContext context)
         {
             _context = context;
         }
 
-        // GET: api/Api
+        // GET: api/FoodApi
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Food>>> GetFavoriteFoods()
         {
             return await _context.FavoriteFoods.ToListAsync();
         }
 
-        // GET: api/Api/5
+        // GET: api/FoodApi/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Food>> GetFood(long id)
         {
@@ -41,7 +41,7 @@ namespace api.Controllers
             return food;
         }
 
-        // PUT: api/Api/5
+        // PUT: api/FoodApi/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFood(long id, Food food)
@@ -72,7 +72,7 @@ namespace api.Controllers
             return NoContent();
         }
 
-        // POST: api/Api
+        // POST: api/FoodApi
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Food>> PostFood(Food food)
@@ -80,11 +80,10 @@ namespace api.Controllers
             _context.FavoriteFoods.Add(food);
             await _context.SaveChangesAsync();
 
-            // return CreatedAtAction("GetFood", new { id = food.Id }, food);
-            return CreatedAtAction("GetFood", new { id = food.Id}, food);
+            return CreatedAtAction("GetFood", new { id = food.Id }, food);
         }
 
-        // DELETE: api/Api/5
+        // DELETE: api/FoodApi/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFood(long id)
         {

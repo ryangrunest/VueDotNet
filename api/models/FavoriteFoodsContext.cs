@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace ApiController.Models {
+namespace FoodApi.Models {
   public class FavoriteFoodsContext : DbContext {
     public FavoriteFoodsContext(DbContextOptions<FavoriteFoodsContext> options)
       : base(options) {}
